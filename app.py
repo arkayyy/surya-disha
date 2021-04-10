@@ -92,7 +92,7 @@ def home():
 
     val_prediction = model.predict(humara_data)
 
-    return str(val_prediction[0])
+    return str(abs(val_prediction[0]))
 
 
 if __name__ == "__main__":
