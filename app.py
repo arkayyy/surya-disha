@@ -32,10 +32,10 @@ def home():
 
     times = pd.date_range('2021-04-10', '2021-04-11', closed='left', freq='5min',
                           tz=tz)
-    solpos = solarposition.get_solarposition(times, humara_lat, humara_lon)
+    solpos = solarposition.get_solarposition(times, lat, lon)
     # solpos.to_csv('output.csv')
 
-    humara_data1 = pvlib.solarposition.get_solarposition(datetime.now(), humara_lat, humara_lon,
+    humara_data1 = pvlib.solarposition.get_solarposition(datetime.now(), lat, lon,
                                                          altitude=None, pressure=None, method='nrel_numpy', temperature=humara_temp-273)
 
     humara_apparentZenith1 = humara_data1.apparent_zenith
