@@ -9,6 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 from datetime import datetime
 import numpy as np
+import geocoder
+import requests
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -19,14 +21,22 @@ def home():
     model = RandomForestRegressor(random_state=1)
     tz = 'Asia/Dili'
     lat, lon = 27, 77
+    g = geocoder.ip('me')
+    humara_lat,humara_lon=g.latlng
+
+    call_api = 'http://api.openweathermap.org/data/2.5/forecast?lat=' + \
+    str(humara_lat)+'&lon='+str(humara_lon) + \
+    '&appid=4dae0b875d2f6cfd4fbfe356e04c5326'
+    rep = requests.get(call_api)
+    humara_temp = rep.json()['list'][0]['main']['temp']
 
     times = pd.date_range('2021-04-10', '2021-04-11', closed='left', freq='5min',
                           tz=tz)
-    solpos = solarposition.get_solarposition(times, lat, lon)
+    solpos = solarposition.get_solarposition(times, humara_lat, humara_lon)
     # solpos.to_csv('output.csv')
 
-    humara_data1 = pvlib.solarposition.get_solarposition(datetime.now(), lat, lon,
-                                                         altitude=None, pressure=None, method='nrel_numpy', temperature=12)
+    humara_data1 = pvlib.solarposition.get_solarposition(datetime.now(), humara_lat, humara_lon,
+                                                         altitude=None, pressure=None, method='nrel_numpy', temperature=humara_temp-273)
 
     humara_apparentZenith1 = humara_data1.apparent_zenith
 
